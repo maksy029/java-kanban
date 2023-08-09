@@ -12,6 +12,13 @@ public class Task {
         this.status = status;
     }
 
+    public Task(Long id, String name, String desc, String status) {
+        this.id = id;
+        this.name = name;
+        this.desc = desc;
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }

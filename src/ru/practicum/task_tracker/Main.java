@@ -1,79 +1,117 @@
 package ru.practicum.task_tracker;
 
-import ru.practicum.task_tracker.manager.TaskTracker;
+import ru.practicum.task_tracker.manager.Manager;
 import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
+import java.util.ArrayList;
+
 public class Main {
+    static Manager manager = new Manager();
     public static void main(String[] args) {
-        TaskTracker taskTracker = new TaskTracker();
+
 
         //Создание задач и присвоение ID
         Task task1 = new Task("Заправка", "заправить топливом авто", "NEW");
-        Long task1Id = taskTracker.addNewTask(task1);
+        Long task1Id = manager.addNewTask(task1);
 
         Task task2 = new Task("Мойка", "помыть авто", "NEW");
-        Long task2Id = taskTracker.addNewTask(task2);
+        Long task2Id = manager.addNewTask(task2);
 
         Epic epic1 = new Epic("ТО авто", "Произвести техническое обслуживание авто");
-        long epic1Id = taskTracker.addNewEpic(epic1);
+        long epic1Id = manager.addNewEpic(epic1);
 
         Subtask subtask1 = new Subtask("Запчасти", "Купить масло и фильтра", "NEW", epic1Id);
-        Long subtask1Id = taskTracker.addNewSubtask(subtask1);
+        Long subtask1Id = manager.addNewSubtask(subtask1);
 
         Subtask subtask2 = new Subtask("Автосервис", "найти автосервис и сдать авто", "NEW", epic1Id);
-        Long subtask2Id = taskTracker.addNewSubtask(subtask2);
+        Long subtask2Id = manager.addNewSubtask(subtask2);
 
         Epic epic2 = new Epic("Колеса", "поменять колеса на авто");
-        Long epic2Id = taskTracker.addNewEpic(epic2);
+        Long epic2Id = manager.addNewEpic(epic2);
 
         Subtask subtask3 = new Subtask("Поиск", "Найти в автомагазине колеса необходимого формата", "NEW", epic2Id);
-        Long subtask3Id = taskTracker.addNewSubtask(subtask3);
+        Long subtask3Id = manager.addNewSubtask(subtask3);
+
+
 
         //Проверка. Печать всех task, epic, subtask
         System.out.println("");
         System.out.println("Проверка. Печатаем task, epic, subtask: ");
-        taskTracker.print();
+        print();
         System.out.println("");
-
+/*
         // Проверка. Обновление статусов.
         System.out.println("Проверка. Обновления статусов:");
-        taskTracker.updateTaskStatus(task1);
-        taskTracker.updateTaskStatus(task1);
-        taskTracker.updateTaskStatus(task2);
-        taskTracker.updateTaskStatus(task2);
-        taskTracker.updateSubtaskStatus(subtask1);
-        taskTracker.updateSubtaskStatus(subtask2);
-        taskTracker.updateSubtaskStatus(subtask2);
-        taskTracker.updateSubtaskStatus(subtask3);
-        taskTracker.print();
+        manager.updateTask(task1);
+        manager.updateTask(task1);
+        manager.updateTask(task2);
+        manager.updateTask(task2);
+        manager.updateSubtask(subtask1);
+        manager.updateSubtask(subtask2);
+        manager.updateSubtask(subtask2);
+        manager.updateSubtask(subtask3);
+        print();
         System.out.println("");
 
-/*
+
         // Проверка. Удаление.
         System.out.println("Проверка. Удаление task, subtask и epic:");
-        taskTracker.deleteTask(task1Id);
-        taskTracker.deleteEpic(epic2Id);
-        taskTracker.deleteSubtask(subtask2Id);
-        taskTracker.print();
+        manager.deleteTask(task1Id);
+        manager.deleteEpic(epic2Id);
+        manager.deleteSubtask(subtask2Id);
+        print();
         System.out.println("");
 
         // Проверка. Обноление Task.
         System.out.println("Проверка. Обноление Task:");
         Task task3 = new Task("Обклейка", "обклеить фары пленкой", "NEW");
-        taskTracker.updateTaskInfo(task3, task2Id);
-        taskTracker.print();
+        manager.updateTask(task3);
+        print();
         System.out.println("");
 
         //Проверка. Обновление Epic.
         System.out.println("Проверка. Обновление Epic:");
         Epic epic3 = new Epic("Путешетвие", "продумать путешествие на авто");
-        taskTracker.updateEpicInfo(epic3, epic2Id);
+        manager.updateEpicInfo(epic3, epic2Id);
         Subtask subtask4 = new Subtask("Сабтаск4", "описание сабтакска4", "NEW", epic1Id);
-        taskTracker.updateSubtaskInfo(subtask4, subtask3Id);
-        taskTracker.print();
+        manager.updateSubtask(subtask4);
+        print();
 */
 
     }
+
+    public static void print() {
+        for (Task task : manager.getTasks().values()) {
+            System.out.println("Task: " + task.getName() + ". Описание: " + task.getDesc() + ". Статус: " + task.getStatus());
+        }
+        for (Epic epic : manager.getEpics().values()) {
+            System.out.println("Epic: " + epic.getName() + ". Описание: " + epic.getDesc() + ". Статус: " + epic.getStatus());
+            for (Subtask subtask : manager.getSubtasks().values()) {
+                for (int i = 0; i < epic.getSubtaskIds().size(); i++) {
+                    if (subtask.getId() == epic.getSubtaskIds().get(i)) {
+                        System.out.println("Subtask: " + subtask.getName() + ". Описание: " + subtask.getDesc() + ". Статус: " + subtask.getStatus());
+                    }
+                }
+            }
+        }
+    }
+
+    public ArrayList<String> printEpicById(Epic epic) { // печать и возврат эпика
+        ArrayList<String> allSubtasksForCurrentEpic = new ArrayList<>();
+        System.out.println("Эпик: " + epic.getName() + "Статус: " + epic.getStatus());
+        for (Subtask subtask : manager.getSubtasks().values()) {
+            for (int i = 0; i < epic.getSubtaskIds().size(); i++) {
+                if (subtask.getId() == epic.getSubtaskIds().get(i)) {
+                    allSubtasksForCurrentEpic.add(subtask.getName());
+                }
+            }
+        }
+        for (int j = 0; j < allSubtasksForCurrentEpic.size(); j++) {
+            System.out.println(allSubtasksForCurrentEpic.get(j));
+        }
+        return allSubtasksForCurrentEpic;
+    }
+
 }
