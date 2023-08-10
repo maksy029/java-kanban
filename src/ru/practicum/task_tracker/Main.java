@@ -12,7 +12,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         //Создание задач и присвоение ID
         Task task1 = new Task("Заправка", "заправить топливом авто", "NEW");
         Long task1Id = manager.addNewTask(task1);
@@ -55,7 +54,6 @@ public class Main {
         print();
         System.out.println("");
 
-
         // Проверка. Удаление.
         System.out.println("Проверка. Удаление task, subtask и epic:");
         manager.deleteTask(task1Id);
@@ -74,11 +72,30 @@ public class Main {
         //Проверка. Обновление Epic.
         System.out.println("Проверка. Обновление Epic:");
         Epic epic3 = new Epic("Путешетвие", "продумать путешествие на авто");
-        manager.updateEpicInfo(epic3);
+        manager.updateEpic(epic3);
         Subtask subtask4 = new Subtask("Сабтаск4", "описание сабтакска4", "NEW", epic1Id);
         manager.updateSubtask(subtask4);
         print();
 */
+        // Проверка. обновление Таск
+        Task newTask = new Task(task1Id, "Тестовая", "Тестовая", "NEW");
+        manager.updateTask(newTask);
+        manager.updateTask(task2);
+
+        for (Long aLong : manager.getTasks().keySet()) {
+            System.out.println("\nКлючи карты: " + aLong);
+            System.out.println(manager.getTasks().get(aLong).getName());
+        }
+
+        //Проверка. Возврашение Task Subtask Epic
+        System.out.println(manager.getTaskById(task1Id).getName());
+        System.out.println(manager.getSubtaskById(subtask1Id).getName());
+        System.out.println(manager.getEpicById(epic1Id).getName());
+
+        // Проверка. Вывод инфо.
+        System.out.println("У эпика с ID: " + epic1Id + " Название: " + manager.getEpicById(epic1Id).getName());
+        System.out.println("У таски с ID: " + task1Id + " Название: " + manager.getTaskById(task1Id).getName());
+        System.out.println("У сабтаски с ID: " + subtask1Id + "название: " + manager.getSubtaskById(subtask1Id).getName());
 
     }
 
@@ -98,7 +115,7 @@ public class Main {
         }
     }
 
-    public ArrayList<String> printEpicById(Epic epic) { // печать и возврат эпика
+    public static ArrayList<String> printEpicById(Epic epic) { // печать и возврат эпика
         ArrayList<String> list = new ArrayList<>();
         System.out.println("Эпик: " + epic.getName() + "Статус: " + epic.getStatus());
         for (Subtask subtask : manager.getSubtasks().values()) {
