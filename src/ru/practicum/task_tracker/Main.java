@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class Main {
     static Manager manager = new Manager();
+
     public static void main(String[] args) {
 
 
@@ -33,7 +34,6 @@ public class Main {
 
         Subtask subtask3 = new Subtask("Поиск", "Найти в автомагазине колеса необходимого формата", "NEW", epic2Id);
         Long subtask3Id = manager.addNewSubtask(subtask3);
-
 
 
         //Проверка. Печать всех task, epic, subtask
@@ -74,7 +74,7 @@ public class Main {
         //Проверка. Обновление Epic.
         System.out.println("Проверка. Обновление Epic:");
         Epic epic3 = new Epic("Путешетвие", "продумать путешествие на авто");
-        manager.updateEpicInfo(epic3, epic2Id);
+        manager.updateEpicInfo(epic3);
         Subtask subtask4 = new Subtask("Сабтаск4", "описание сабтакска4", "NEW", epic1Id);
         manager.updateSubtask(subtask4);
         print();
@@ -99,19 +99,18 @@ public class Main {
     }
 
     public ArrayList<String> printEpicById(Epic epic) { // печать и возврат эпика
-        ArrayList<String> allSubtasksForCurrentEpic = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
         System.out.println("Эпик: " + epic.getName() + "Статус: " + epic.getStatus());
         for (Subtask subtask : manager.getSubtasks().values()) {
             for (int i = 0; i < epic.getSubtaskIds().size(); i++) {
                 if (subtask.getId() == epic.getSubtaskIds().get(i)) {
-                    allSubtasksForCurrentEpic.add(subtask.getName());
+                    list.add(subtask.getName());
                 }
             }
         }
-        for (int j = 0; j < allSubtasksForCurrentEpic.size(); j++) {
-            System.out.println(allSubtasksForCurrentEpic.get(j));
+        for (int j = 0; j < list.size(); j++) {
+            System.out.println(list.get(j));
         }
-        return allSubtasksForCurrentEpic;
+        return list;
     }
-
 }
