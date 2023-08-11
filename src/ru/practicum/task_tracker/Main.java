@@ -5,7 +5,12 @@ import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
-import java.util.ArrayList;
+/*
+коммит 4: мы провели рефакторинг методов update task/subtask/epic.
+Изменили метод deleteSubtaskById, теперь он так же удаляет ID subtask из эпика.
+Изменили работу методов get task/subtask/epic, теперь они возвращают листы.
+
+ */
 
 public class Main {
     static Manager manager = new Manager();
