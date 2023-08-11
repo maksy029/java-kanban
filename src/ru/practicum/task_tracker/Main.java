@@ -82,11 +82,6 @@ public class Main {
         manager.updateTask(newTask);
         manager.updateTask(task2);
 
-        for (Long aLong : manager.getTasks().keySet()) {
-            System.out.println("\nКлючи карты: " + aLong);
-            System.out.println(manager.getTasks().get(aLong).getName());
-        }
-
         //Проверка. Возврашение Task Subtask Epic
         System.out.println(manager.getTaskById(task1Id).getName());
         System.out.println(manager.getSubtaskById(subtask1Id).getName());
@@ -97,15 +92,30 @@ public class Main {
         System.out.println("У таски с ID: " + task1Id + " Название: " + manager.getTaskById(task1Id).getName());
         System.out.println("У сабтаски с ID: " + subtask1Id + "название: " + manager.getSubtaskById(subtask1Id).getName());
 
+        System.out.println();
+        for (Task task : manager.getTasks()) {
+            System.out.println(task.getName());
+        }
+
+        manager.deleteSubtaskById(subtask1Id);
+        for (Long subtaskId : epic1.getSubtaskIds()) {
+            System.out.println("У эпика с ID: " + epic1Id + " Саьтаски с ID: " + subtaskId);
+        }
+
+        System.out.println();
+        for (Epic epic : manager.getEpics()) {
+            System.out.println("Эпик с названием: " + epic.getName());
+        }
+
     }
 
     public static void print() {
-        for (Task task : manager.getTasks().values()) {
+        for (Task task : manager.getTasks()) {
             System.out.println("Task: " + task.getName() + ". Описание: " + task.getDesc() + ". Статус: " + task.getStatus());
         }
-        for (Epic epic : manager.getEpics().values()) {
+        for (Epic epic : manager.getEpics()) {
             System.out.println("Epic: " + epic.getName() + ". Описание: " + epic.getDesc() + ". Статус: " + epic.getStatus());
-            for (Subtask subtask : manager.getSubtasks().values()) {
+            for (Subtask subtask : manager.getSubtasks()) {
                 for (int i = 0; i < epic.getSubtaskIds().size(); i++) {
                     if (subtask.getId() == epic.getSubtaskIds().get(i)) {
                         System.out.println("Subtask: " + subtask.getName() + ". Описание: " + subtask.getDesc() + ". Статус: " + subtask.getStatus());
@@ -113,21 +123,5 @@ public class Main {
                 }
             }
         }
-    }
-
-    public static ArrayList<String> printEpicById(Epic epic) { // печать и возврат эпика
-        ArrayList<String> list = new ArrayList<>();
-        System.out.println("Эпик: " + epic.getName() + "Статус: " + epic.getStatus());
-        for (Subtask subtask : manager.getSubtasks().values()) {
-            for (int i = 0; i < epic.getSubtaskIds().size(); i++) {
-                if (subtask.getId() == epic.getSubtaskIds().get(i)) {
-                    list.add(subtask.getName());
-                }
-            }
-        }
-        for (int j = 0; j < list.size(); j++) {
-            System.out.println(list.get(j));
-        }
-        return list;
     }
 }

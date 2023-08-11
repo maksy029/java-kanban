@@ -47,9 +47,9 @@ public class Manager {
         if (saveTask == null) {
             return;
         }
-        tasks.get(task.getId()).setName(task.getName());
-        tasks.get(task.getId()).setDesc(task.getDesc());
-        tasks.get(task.getId()).setStatus(task.getStatus());
+        saveTask.setName(task.getName());
+        saveTask.setDesc(task.getDesc());
+        saveTask.setStatus(task.getStatus());
     }
 
     public void updateSubtask(Subtask subtask) {
@@ -57,10 +57,10 @@ public class Manager {
         if (saveSubtask == null) {
             return;
         }
-        subtasks.get(subtask.getId()).setName(subtask.getName());
-        subtasks.get(subtask.getId()).setDesc(subtask.getDesc());
-        subtasks.get(subtask.getId()).setStatus(subtask.getStatus());
-        updateEpicStatus(subtasks.get(subtask.getId()).getEpicId());
+        saveSubtask.setName(subtask.getName());
+        saveSubtask.setDesc(subtask.getDesc());
+        saveSubtask.setStatus(subtask.getStatus());
+        updateEpicStatus(saveSubtask.getEpicId());
     }
 
     public void updateEpic(Epic epic) {
@@ -68,10 +68,9 @@ public class Manager {
         if (saveEpic == null) {
             return;
         }
-        epics.get(epic.getId()).setName(epic.getName());
-        epics.get(epic.getId()).setDesc(epic.getName());
-        epics.get(epic.getId()).setStatus(epic.getStatus());
-        updateEpicStatus(epic.getId());
+        saveEpic.setName(epic.getName());
+        saveEpic.setDesc(epic.getDesc());
+        saveEpic.setStatus(epic.getStatus());
     }
 
     void updateEpicStatus(long epicId) {
@@ -84,6 +83,9 @@ public class Manager {
         String status = null;
         for (long subtaskId : subtaskIds) {
             Subtask subtask = subtasks.get(subtaskId);
+            if (subtask==null) {
+                return;
+            }
 
             if (status == null) {
                 status = subtask.getStatus();
@@ -102,13 +104,18 @@ public class Manager {
         tasks.remove(taskId);
     }
 
-    public void deleteSubtask(Long subtaskId) { // удаление сабтаски по id
-        subtasks.remove(subtaskId);
-        for (Subtask subtask : subtasks.values()) {
-            if (subtask.getId() == subtaskId) {
-                updateEpicStatus(subtask.getEpicId());
-            }
+    public void deleteSubtaskById(Long subtaskId) { // удаление сабтаски по id
+        Subtask savedSubtask = subtasks.get(subtaskId);
+        if (savedSubtask == null) {
+            return;
         }
+        Epic savedEpic = epics.get(savedSubtask.getEpicId());
+        if (savedEpic == null) {
+            return;
+        }
+        subtasks.remove(subtaskId);
+        updateEpicStatus(savedEpic.getId());
+        savedEpic.getSubtaskIds().remove(savedSubtask.getId());
     }
 
     public void deleteEpic(Long epicId) { // удаление эпика по id
@@ -132,16 +139,15 @@ public class Manager {
         return subtasks.get(subtaskId);
     }
 
-    public HashMap<Long, Task> getTasks() {
-        return tasks;
+    public ArrayList<Task> getTasks() {
+        return new ArrayList<>(tasks.values());
     }
 
-    public HashMap<Long, Epic> getEpics() {
-        return epics;
+    public ArrayList<Epic> getEpics() {
+        return new ArrayList<>(epics.values());
     }
 
-    public HashMap<Long, Subtask> getSubtasks() {
-        return subtasks;
+    public ArrayList<Subtask> getSubtasks() {
+        return new ArrayList<>(subtasks.values());
     }
-
 }
