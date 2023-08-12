@@ -1,5 +1,6 @@
 package ru.practicum.task_tracker.manager;
 
+import ru.practicum.task_tracker.module.Status;
 import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
@@ -7,24 +8,30 @@ import ru.practicum.task_tracker.tasks.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Manager {
+import static ru.practicum.task_tracker.manager.Managers.getDefaultHistory;
+
+public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Long, Task> tasks = new HashMap<>();
     private final HashMap<Long, Epic> epics = new HashMap<>();
     private final HashMap<Long, Subtask> subtasks = new HashMap<>();
     private long generatorId = 0;
+    private final HistoryManager inMemoryHistoryManager = getDefaultHistory();
 
+    @Override
     public Long addNewTask(Task task) {
         task.setId(generateId());
         tasks.put(task.getId(), task);
         return task.getId();
     }
 
+    @Override
     public Long addNewEpic(Epic epic) {
         epic.setId(generateId());
         epics.put(epic.getId(), epic);
         return epic.getId();
     }
 
+    @Override
     public Long addNewSubtask(Subtask subtask) {
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
@@ -38,10 +45,12 @@ public class Manager {
         return subtask.getId();
     }
 
-    private long generateId() {
+    @Override
+    public long generateId() {
         return generatorId++;
     }
 
+    @Override
     public void updateTask(Task task) {
         Task saveTask = tasks.get(task.getId());
         if (saveTask == null) {
@@ -52,6 +61,7 @@ public class Manager {
         saveTask.setStatus(task.getStatus());
     }
 
+    @Override
     public void updateSubtask(Subtask subtask) {
         Subtask saveSubtask = subtasks.get(subtask.getId());
         if (saveSubtask == null) {
@@ -63,6 +73,7 @@ public class Manager {
         updateEpicStatus(saveSubtask.getEpicId());
     }
 
+    @Override
     public void updateEpic(Epic epic) {
         Epic saveEpic = epics.get(epic.getId());
         if (saveEpic == null) {
@@ -73,37 +84,39 @@ public class Manager {
         saveEpic.setStatus(epic.getStatus());
     }
 
-    void updateEpicStatus(long epicId) {
+    @Override
+    public void updateEpicStatus(long epicId) {
         Epic epic = epics.get(epicId);
         ArrayList<Long> subtaskIds = epic.getSubtaskIds();
         if (subtaskIds.isEmpty()) {
-            epic.setStatus("NEW");
+            epic.setStatus(Status.NEW);
             return;
         }
-        String status = null;
         for (long subtaskId : subtaskIds) {
             Subtask subtask = subtasks.get(subtaskId);
-            if (subtask==null) {
+            if (subtask == null) {
                 return;
             }
-
-            if (status == null) {
-                status = subtask.getStatus();
-                if (subtaskIds.size() == 1) {
-                    epic.setStatus(status);
-                }
-            } else if (status.equals(subtask.getStatus()) && !status.equals("IN_PROGRESS")) {
-                epic.setStatus(status);
+            if (subtaskIds.size() == 1) {
+                epic.setStatus(subtask.getStatus());
+            } else if (subtask.getStatus() == Status.IN_PROGRESS && subtask.getStatus() != Status.DONE
+                    && subtask.getStatus() != Status.NEW) {
+                epic.setStatus(Status.IN_PROGRESS);
+            } else if (subtask.getStatus() != Status.IN_PROGRESS && subtask.getStatus() != Status.DONE
+                    && subtask.getStatus() == Status.NEW) {
+                epic.setStatus(Status.NEW);
             } else {
-                epic.setStatus("IN_PROGRESS");
+                epic.setStatus(Status.DONE);
             }
         }
     }
 
+    @Override
     public void deleteTask(Long taskId) { // удаление таски по id
         tasks.remove(taskId);
     }
 
+    @Override
     public void deleteSubtaskById(Long subtaskId) { // удаление сабтаски по id
         Subtask savedSubtask = subtasks.get(subtaskId);
         if (savedSubtask == null) {
@@ -118,6 +131,7 @@ public class Manager {
         savedEpic.getSubtaskIds().remove(savedSubtask.getId());
     }
 
+    @Override
     public void deleteEpic(Long epicId) { // удаление эпика по id
         for (Subtask subtask : subtasks.values()) {
             if (subtask.getEpicId() == epicId) {
@@ -127,27 +141,47 @@ public class Manager {
         epics.remove(epicId);
     }
 
+    @Override
     public Task getTaskById(Long taskId) {
+        inMemoryHistoryManager.add(tasks.get(taskId));
         return tasks.get(taskId);
     }
 
+    @Override
     public Epic getEpicById(Long epicId) {
+        inMemoryHistoryManager.add(epics.get(epicId));
         return epics.get(epicId);
     }
 
+    @Override
     public Subtask getSubtaskById(Long subtaskId) {
+        inMemoryHistoryManager.add(subtasks.get(subtaskId));
         return subtasks.get(subtaskId);
     }
 
+    @Override
     public ArrayList<Task> getTasks() {
         return new ArrayList<>(tasks.values());
     }
 
+    @Override
     public ArrayList<Epic> getEpics() {
         return new ArrayList<>(epics.values());
     }
 
+    @Override
     public ArrayList<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
+    }
+
+    @Override
+    public void printHistory() {
+        for (Task task : inMemoryHistoryManager.getHistory()) {
+            if (task == null) {
+                System.out.println("Task пустая");
+                return;
+            }
+            System.out.println(task);
+        }
     }
 }
