@@ -7,13 +7,15 @@ import ru.practicum.task_tracker.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static ru.practicum.task_tracker.manager.Managers.getDefaultHistory;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Long, Task> tasks = new HashMap<>();
-    private final HashMap<Long, Epic> epics = new HashMap<>();
-    private final HashMap<Long, Subtask> subtasks = new HashMap<>();
+    private final Map<Long, Task> tasks = new HashMap<>();
+    private final Map<Long, Epic> epics = new HashMap<>();
+    private final Map<Long, Subtask> subtasks = new HashMap<>();
     private long generatorId = 0;
     private final HistoryManager inMemoryHistoryManager = getDefaultHistory();
 
@@ -41,7 +43,6 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.put(subtask.getId(), subtask);
         epic.addSubtaskId(subtask.getId());
         updateEpicStatus(subtask.getEpicId());
-
         return subtask.getId();
     }
 
@@ -87,7 +88,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpicStatus(long epicId) {
         Epic epic = epics.get(epicId);
-        ArrayList<Long> subtaskIds = epic.getSubtaskIds();
+        List<Long> subtaskIds = epic.getSubtaskIds();
         if (subtaskIds.isEmpty()) {
             epic.setStatus(Status.NEW);
             return;
@@ -160,17 +161,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getTasks() {
+    public List<Task> getTasks() {
         return new ArrayList<>(tasks.values());
     }
 
     @Override
-    public ArrayList<Epic> getEpics() {
+    public List<Epic> getEpics() {
         return new ArrayList<>(epics.values());
     }
 
     @Override
-    public ArrayList<Subtask> getSubtasks() {
+    public List<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
     }
 

@@ -1,7 +1,5 @@
 package ru.practicum.task_tracker;
 
-import ru.practicum.task_tracker.manager.HistoryManager;
-import ru.practicum.task_tracker.manager.InMemoryTaskManager;
 import ru.practicum.task_tracker.manager.TaskManager;
 import ru.practicum.task_tracker.module.Status;
 import ru.practicum.task_tracker.tasks.Epic;
@@ -9,8 +7,6 @@ import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
 import static ru.practicum.task_tracker.manager.Managers.getDefault;
-import static ru.practicum.task_tracker.manager.Managers.getDefaultHistory;
-
 
 /*
 коммит 4: мы провели рефакторинг методов update task/subtask/epic.
@@ -20,7 +16,6 @@ import static ru.practicum.task_tracker.manager.Managers.getDefaultHistory;
  */
 
 public class Main {
-
 
     public static void main(String[] args) {
         TaskManager inMemoryTaskManager = getDefault();
@@ -66,9 +61,12 @@ public class Main {
         System.out.println(inMemoryTaskManager.getEpicById(epic1Id).getName());
 
         // Проверка. Вывод инфо.
-        System.out.println("У эпика с ID: " + epic1Id + " Название: " + inMemoryTaskManager.getEpicById(epic1Id).getName());
-        System.out.println("У таски с ID: " + task1Id + " Название: " + inMemoryTaskManager.getTaskById(task1Id).getName());
-        System.out.println("У сабтаски с ID: " + subtask1Id + "название: " + inMemoryTaskManager.getSubtaskById(subtask1Id).getName());
+        System.out.println("У эпика с ID: " + epic1Id + " Название: "
+                + inMemoryTaskManager.getEpicById(epic1Id).getName());
+        System.out.println("У таски с ID: " + task1Id + " Название: "
+                + inMemoryTaskManager.getTaskById(task1Id).getName());
+        System.out.println("У сабтаски с ID: " + subtask1Id + "название: "
+                + inMemoryTaskManager.getSubtaskById(subtask1Id).getName());
 
         System.out.println();
         for (Task task : inMemoryTaskManager.getTasks()) {
@@ -92,8 +90,6 @@ public class Main {
         inMemoryTaskManager.getSubtaskById(subtask2Id);
         inMemoryTaskManager.getEpicById(epic1Id);
         inMemoryTaskManager.printHistory();
-
-
     }
 
     public static void print() {

@@ -1,7 +1,6 @@
 package ru.practicum.task_tracker.manager;
 
 import ru.practicum.task_tracker.tasks.Task;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return null;
+        return historyOfViews;
     }
 
     @Override

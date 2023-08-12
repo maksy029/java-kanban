@@ -1,11 +1,10 @@
 package ru.practicum.task_tracker.manager;
 
-import ru.practicum.task_tracker.module.Status;
 import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
 
@@ -37,11 +36,11 @@ public interface TaskManager {
 
     Subtask getSubtaskById(Long subtaskId);
 
-    ArrayList<Task> getTasks();
+    List<Task> getTasks();
 
-    ArrayList<Epic> getEpics();
+    List<Epic> getEpics();
 
-    ArrayList<Subtask> getSubtasks();
+    List<Subtask> getSubtasks();
 
     void printHistory();
 }
