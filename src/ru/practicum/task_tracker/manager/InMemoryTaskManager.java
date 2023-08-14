@@ -128,8 +128,8 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         subtasks.remove(subtaskId);
-        updateEpicStatus(savedEpic.getId());
         savedEpic.getSubtaskIds().remove(savedSubtask.getId());
+        updateEpicStatus(savedEpic.getId());
     }
 
     @Override

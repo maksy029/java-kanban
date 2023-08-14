@@ -11,10 +11,10 @@ import static ru.practicum.task_tracker.manager.Managers.getDefault;
 import static ru.practicum.task_tracker.manager.Managers.getDefaultHistory;
 
 /*
-коммит 4: мы провели рефакторинг методов update task/subtask/epic.
-Изменили метод deleteSubtaskById, теперь он так же удаляет ID subtask из эпика.
-Изменили работу методов get task/subtask/epic, теперь они возвращают листы.
-
+коммит 3 по ТЗ4:
+исправили метод deleteSubtaskById(Long subtaskId) в классе InMemoryTaskManager:
+удаляем сабтаски, затем эпики,
+после обновляем статус эпика
  */
 
 public class Main {
