@@ -1,6 +1,6 @@
 package ru.practicum.task_tracker.manager;
 
-import ru.practicum.task_tracker.module.Status;
+import ru.practicum.task_tracker.models.Status;
 import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
@@ -173,16 +173,5 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
-    }
-
-    @Override
-    public void printHistory() {
-        for (Task task : inMemoryHistoryManager.getHistory()) {
-            if (task == null) {
-                System.out.println("Task пустая");
-                return;
-            }
-            System.out.println(task);
-        }
     }
 }

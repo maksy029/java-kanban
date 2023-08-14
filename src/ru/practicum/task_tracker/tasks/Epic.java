@@ -1,6 +1,6 @@
 package ru.practicum.task_tracker.tasks;
 
-import ru.practicum.task_tracker.module.Status;
+import ru.practicum.task_tracker.models.Status;
 
 import java.util.ArrayList;
 import java.util.Objects;

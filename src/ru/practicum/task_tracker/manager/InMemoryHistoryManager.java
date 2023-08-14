@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final List<Task> historyOfViews = new ArrayList<>();
+    private final List<Task> historyViews = new ArrayList<>();
     private static final int LIMIT_OF_HISTORY_SIZE = 10;
 
     @Override
     public List<Task> getHistory() {
-        return historyOfViews;
+        return historyViews;
     }
 
     @Override
@@ -18,9 +18,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
-        historyOfViews.add(task);
-        if (historyOfViews.size() >= LIMIT_OF_HISTORY_SIZE) {
-            historyOfViews.remove(0);
+        historyViews.add(task);
+        if (historyViews.size() >= LIMIT_OF_HISTORY_SIZE) {
+            historyViews.remove(0);
         }
     }
 }

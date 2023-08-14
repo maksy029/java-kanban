@@ -41,6 +41,4 @@ public interface TaskManager {
     List<Epic> getEpics();
 
     List<Subtask> getSubtasks();
-
-    void printHistory();
 }

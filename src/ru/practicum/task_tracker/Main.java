@@ -1,12 +1,14 @@
 package ru.practicum.task_tracker;
 
+import ru.practicum.task_tracker.manager.HistoryManager;
 import ru.practicum.task_tracker.manager.TaskManager;
-import ru.practicum.task_tracker.module.Status;
+import ru.practicum.task_tracker.models.Status;
 import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
 import static ru.practicum.task_tracker.manager.Managers.getDefault;
+import static ru.practicum.task_tracker.manager.Managers.getDefaultHistory;
 
 /*
 коммит 4: мы провели рефакторинг методов update task/subtask/epic.
@@ -19,6 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
         TaskManager inMemoryTaskManager = getDefault();
+        HistoryManager inMemoryHistoryManager = getDefaultHistory();
 
         //Создание задач и присвоение ID
         Task task1 = new Task("Заправка", "заправить топливом авто", Status.NEW);
@@ -89,7 +92,16 @@ public class Main {
         inMemoryTaskManager.getTaskById(task1Id);
         inMemoryTaskManager.getSubtaskById(subtask2Id);
         inMemoryTaskManager.getEpicById(epic1Id);
-        inMemoryTaskManager.printHistory();
+
+        System.out.println();
+
+        for (Task task : inMemoryHistoryManager.getHistory()) {
+            if (task == null) {
+                System.out.println("Task пустая");
+                return;
+            }
+            System.out.println(task);
+        }
     }
 
     public static void print() {
