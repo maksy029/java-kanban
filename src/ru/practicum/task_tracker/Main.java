@@ -11,10 +11,10 @@ import static ru.practicum.task_tracker.manager.Managers.getDefault;
 import static ru.practicum.task_tracker.manager.Managers.getDefaultHistory;
 
 /*
-коммит 3 по ТЗ4:
-исправили метод deleteSubtaskById(Long subtaskId) в классе InMemoryTaskManager:
-удаляем сабтаски, затем эпики,
-после обновляем статус эпика
+коммит 1 по ТЗ5:
+В классе InMemoryHistoryManager реализовали историю просмотра задач, используя двусвязнный список и HashMap (id, Node)
+В классе InMemoryTaskManager добавили в методы удаления задач - вызов удаления задач из просмотров
+В Main для проверки сделали: 2 Task; 2 Epic, из которых 1 Epic с 3мя Subtask и 1 Epic без Subtask.
  */
 
 public class Main {
@@ -24,46 +24,49 @@ public class Main {
         HistoryManager inMemoryHistoryManager = getDefaultHistory();
 
         //Создание задач и присвоение ID
-        Task task1 = new Task("Заправка", "заправить топливом авто", Status.NEW);
+        Task task1 = new Task("Таск1", "описание Таск1", Status.NEW);
         Long task1Id = inMemoryTaskManager.addNewTask(task1);
 
-        Task task2 = new Task("Мойка", "помыть авто", Status.NEW);
+        Task task2 = new Task("Таск2", "описание Таск2", Status.NEW);
         Long task2Id = inMemoryTaskManager.addNewTask(task2);
 
-        Epic epic1 = new Epic("ТО авто", "Произвести техническое обслуживание авто");
+        Epic epic1 = new Epic("Эпик1", "Описание Эпик1");
         long epic1Id = inMemoryTaskManager.addNewEpic(epic1);
 
-        Subtask subtask1 = new Subtask("Запчасти", "Купить масло и фильтра", Status.NEW, epic1Id);
+        Subtask subtask1 = new Subtask("Сабтаск1", "Описание Сабтаск1", Status.NEW, epic1Id);
         Long subtask1Id = inMemoryTaskManager.addNewSubtask(subtask1);
 
-        Subtask subtask2 = new Subtask("Автосервис", "найти автосервис и сдать авто", Status.NEW, epic1Id);
+        Subtask subtask2 = new Subtask("Сабтаск2", "Описание Сабтаск2", Status.NEW, epic1Id);
         Long subtask2Id = inMemoryTaskManager.addNewSubtask(subtask2);
 
-        Epic epic2 = new Epic("Колеса", "поменять колеса на авто");
-        Long epic2Id = inMemoryTaskManager.addNewEpic(epic2);
-
-        Subtask subtask3 = new Subtask("Поиск", "Найти в автомагазине колеса необходимого формата",
-                Status.DONE, epic2Id);
+        Subtask subtask3 = new Subtask("Сабтаск3", "Описание Сабтаск3", Status.NEW, epic1Id);
         Long subtask3Id = inMemoryTaskManager.addNewSubtask(subtask3);
 
+        Epic epic2 = new Epic("Эпик2", "Описание Эпик2");
+        Long epic2Id = inMemoryTaskManager.addNewEpic(epic2);
 
         //Проверка. Печать всех task, epic, subtask
-        System.out.println("");
+        System.out.println();
         System.out.println("Проверка. Печатаем task, epic, subtask: ");
         print();
-        System.out.println("");
 
-        // Проверка. обновление Таск
+        // Проверка. Обновление Таск
+        System.out.println();
+        System.out.println("Проверка. Обновление Таск");
         Task newTask = new Task("Тестовая", "Тестовая", Status.NEW);
         inMemoryTaskManager.updateTask(newTask);
         inMemoryTaskManager.updateTask(task2);
 
         //Проверка. Возврашение Task Subtask Epic
+        System.out.println();
+        System.out.println("Проверка. Возврашение Task Subtask Epic");
         System.out.println(inMemoryTaskManager.getTaskById(task1Id).getName());
         System.out.println(inMemoryTaskManager.getSubtaskById(subtask1Id).getName());
         System.out.println(inMemoryTaskManager.getEpicById(epic1Id).getName());
 
         // Проверка. Вывод инфо.
+        System.out.println();
+        System.out.println("Проверка. Вывод инфо.");
         System.out.println("У эпика с ID: " + epic1Id + " Название: "
                 + inMemoryTaskManager.getEpicById(epic1Id).getName());
         System.out.println("У таски с ID: " + task1Id + " Название: "
@@ -78,7 +81,7 @@ public class Main {
 
         inMemoryTaskManager.deleteSubtaskById(subtask1Id);
         for (Long subtaskId : epic1.getSubtaskIds()) {
-            System.out.println("У эпика с ID: " + epic1Id + " Саьтаски с ID: " + subtaskId);
+            System.out.println("У эпика с ID: " + epic1Id + " Сабтаски с ID: " + subtaskId);
         }
 
         System.out.println();
