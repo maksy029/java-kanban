@@ -116,7 +116,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTask(Long taskId) { // удаление таски по id
         tasks.remove(taskId);
         inMemoryHistoryManager.remove(taskId);
-
     }
 
     @Override
@@ -145,6 +144,37 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epics.remove(epicId);
         inMemoryHistoryManager.remove(epicId);
+    }
+
+    @Override
+    public void deleteAllTask() { // удаление всех тасок в мапе и истории просмотра
+        for (Long id : tasks.keySet()) {
+            inMemoryHistoryManager.remove(id);
+        }
+        tasks.clear();
+    }
+
+    @Override
+    public void deleteAllSubtask() { // удаление всех сабтасок и истории просмотра
+        for (Long id : subtasks.keySet()) {
+            inMemoryHistoryManager.remove(id);
+        }
+        subtasks.clear();
+    }
+
+    @Override
+    public void deleteAllEpic() { // удаление всех эпиков и истории просмотра
+        for (Long id : epics.keySet()) {
+            inMemoryHistoryManager.remove(id);
+        }
+        epics.clear();
+    }
+
+    @Override
+    public void deleteAll() { // полная очистка тасок/сабтасок/эпиков и их просмотров
+        deleteAllTask();
+        deleteAllSubtask();
+        deleteAllEpic();
     }
 
     @Override

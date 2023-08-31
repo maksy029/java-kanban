@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private ArrayList<Long> subtaskIds;  // в этом списке лежат id сабстасков для эпика
+    private final ArrayList<Long> subtaskIds;  // в этом списке лежат id сабстасков для эпика
 
     public Epic(String name, String desc) {
         super(name, desc, Status.NEW);
@@ -15,10 +15,6 @@ public class Epic extends Task {
 
     public ArrayList<Long> getSubtaskIds() {
         return subtaskIds;
-    }
-
-    public void setSubtaskIds(ArrayList<Long> subtaskIds) {
-        this.subtaskIds = subtaskIds;
     }
 
     public void addSubtaskId(long subtaskId) {

@@ -11,10 +11,9 @@ import static ru.practicum.task_tracker.manager.Managers.getDefault;
 import static ru.practicum.task_tracker.manager.Managers.getDefaultHistory;
 
 /*
-коммит 1 по ТЗ5:
-В классе InMemoryHistoryManager реализовали историю просмотра задач, используя двусвязнный список и HashMap (id, Node)
-В классе InMemoryTaskManager добавили в методы удаления задач - вызов удаления задач из просмотров
-В Main для проверки сделали: 2 Task; 2 Epic, из которых 1 Epic с 3мя Subtask и 1 Epic без Subtask.
+коммит 2 по ТЗ5:
+Доработали замечания по прошлым спринтам(ТЗ3):
+В классе InMemoryTaskManager добавили методы удаления всех Task, Subtask, Epic и их историю просмотра
  */
 
 public class Main {

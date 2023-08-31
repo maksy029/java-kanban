@@ -30,6 +30,14 @@ public interface TaskManager {
 
     void deleteEpic(Long epicId);
 
+    void deleteAllTask();
+
+    void deleteAllSubtask();
+
+    void deleteAllEpic();
+
+    void deleteAll();
+
     Task getTaskById(Long taskId);
 
     Epic getEpicById(Long epicId);
