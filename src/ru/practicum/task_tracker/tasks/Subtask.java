@@ -1,11 +1,13 @@
 package ru.practicum.task_tracker.tasks;
 
 import ru.practicum.task_tracker.models.Status;
+import ru.practicum.task_tracker.models.TaskType;
 
 import java.util.Objects;
 
 public class Subtask extends Task {
     private Long epicId;
+    private final TaskType type = TaskType.SUBTASK;
 
 
     public Subtask(String name, String desc, Status status, Long epicId) {
@@ -15,6 +17,10 @@ public class Subtask extends Task {
 
     public Long getEpicId() {
         return epicId;
+    }
+
+    public TaskType getType() {
+        return type;
     }
 
     @Override
@@ -33,14 +39,10 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
-                "epicId=" + epicId +
-                ", id=" + id +
-                ", name='" + name + '\'' +
-                ", desc='" + desc + '\'' +
-                ", status=" + status +
-                '}';
+        return String.format("%d,%s,%s,%s,%s,%d", id, type, name, status, desc, epicId);
     }
+
+
 }
 
 

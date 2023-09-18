@@ -23,7 +23,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         remove(id);
         linkLast(task);
         nodeMap.put(id, last);
-
     }
 
     @Override

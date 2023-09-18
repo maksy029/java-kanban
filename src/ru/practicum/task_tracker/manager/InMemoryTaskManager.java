@@ -16,8 +16,9 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Long, Task> tasks = new HashMap<>();
     private final Map<Long, Epic> epics = new HashMap<>();
     private final Map<Long, Subtask> subtasks = new HashMap<>();
-    private long generatorId = 0;
+    private long generatorId = 1;
     private final HistoryManager inMemoryHistoryManager = getDefaultHistory();
+
 
     @Override
     public Long addNewTask(Task task) {
@@ -167,6 +168,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Long id : epics.keySet()) {
             inMemoryHistoryManager.remove(id);
         }
+        deleteAllSubtask();
         epics.clear();
     }
 
@@ -208,5 +210,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
+    }
+
+    @Override
+    public HistoryManager getInMemoryHistoryManager() {
+        return this.inMemoryHistoryManager;
     }
 }

@@ -1,6 +1,7 @@
 package ru.practicum.task_tracker.tasks;
 
 import ru.practicum.task_tracker.models.Status;
+import ru.practicum.task_tracker.models.TaskType;
 
 import java.util.Objects;
 
@@ -9,11 +10,16 @@ public class Task {
     protected String name;
     protected String desc;
     protected Status status;
+    private final TaskType type = TaskType.TASK;
 
     public Task(String name, String desc, Status status) {
         this.name = name;
         this.desc = desc;
         this.status = status;
+    }
+
+    public TaskType getType() {
+        return type;
     }
 
     public Long getId() {
@@ -63,11 +69,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", desc='" + desc + '\'' +
-                ", status=" + status +
-                '}';
+        return String.format("%d,%s,%s,%s,%s,", id, this.type, name, status, desc);
     }
 }
+
