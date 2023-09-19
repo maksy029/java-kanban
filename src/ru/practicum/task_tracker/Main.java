@@ -9,8 +9,11 @@ import ru.practicum.task_tracker.tasks.Task;
 import static ru.practicum.task_tracker.manager.Managers.getDefault;
 
 /*
-коммит 1 по ТЗ6:
-Реализовали логику сохранения задач и истории в CSV файл + восстановление задач и истории просмотров из CSV файла
+коммит 2 по ТЗ6:
+исправили в классе FileBackedTasksManager:
+- переменная File file теперь private;
+- в методе loadFromFile изменили тип переменной newTaskManager c TaskManager  на FileBackedTasksManager,
+тем самым ушли от каста возвращаемого обекта;
  */
 
 public class Main {

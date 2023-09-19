@@ -61,7 +61,6 @@ public class FileBackedTasksManagerTest {
             System.out.println(history);
         }
 
-        
         //Печать восстановленных из СSV файла задач:
         System.out.println();
         System.out.println("Печать восстановленных из СSV файла задач");
