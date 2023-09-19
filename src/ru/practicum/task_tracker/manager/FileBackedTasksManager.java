@@ -10,7 +10,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    File file;
+    private final File file;
     private static final String HEADER_CSV_FILE = "id,type,name,status,description,epic\n";
 
     public FileBackedTasksManager(File file) {
@@ -44,7 +44,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static FileBackedTasksManager loadFromFile(File file) {
-        TaskManager newTaskManager = new FileBackedTasksManager(file);
+        FileBackedTasksManager newTaskManager = new FileBackedTasksManager(file);
         try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             br.readLine(); // пропускаем первую строчку с заголовком
             while (br.ready()) {
@@ -85,9 +85,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
 
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка чтения имеющегося файла");
+            throw new ManagerSaveException("Ошибка чтения имеющегося CSV файла");
         }
-        return (FileBackedTasksManager) newTaskManager;
+        return newTaskManager;
     }
 
     @Override
@@ -200,7 +200,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public long generateId() {
-        long id = super.generateId();
+        Long id = super.generateId();
         save();
         return id;
     }
