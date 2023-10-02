@@ -1,5 +1,6 @@
 package ru.practicum.task_tracker.converter;
 
+import ru.practicum.task_tracker.exception.ManagerSaveException;
 import ru.practicum.task_tracker.manager.HistoryManager;
 import ru.practicum.task_tracker.models.Status;
 import ru.practicum.task_tracker.models.TaskType;
@@ -7,6 +8,7 @@ import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,32 +21,52 @@ public class CSVConverter {
         return task.toString();
     }
 
+    // taskStr формат: id,type,name,status,description,duration,startTime,epic
     public static Task fromString(String taskStr) {
-        String[] tokens = taskStr.split(","); // taskStr формат: id,type,name,status,description,epic
+        String[] tokens = taskStr.split(",");
         Long id = (long) Integer.parseInt(tokens[0]);
         TaskType type = TaskType.valueOf(tokens[1]);
         String name = tokens[2];
         Status status = Status.valueOf(tokens[3]);
         String desc = tokens[4];
-        Long epicID = null;
-        if (tokens.length > 5) {
-            epicID = (long) Integer.parseInt(tokens[5]);
+        long duration = Integer.parseInt(tokens[5]);
+        LocalDateTime startTime = null;
+        if (!tokens[6].equals("null")) {
+            startTime = LocalDateTime.parse(tokens[6]);
         }
+        Long epicID = null;
+        if (tokens.length > 7) {
+            epicID = (long) Integer.parseInt(tokens[7]);
+        }
+
         switch (type) {
             case TASK:
-                return new Task(name, desc, status);
-            case SUBTASK:
-                return new Subtask(name, desc, status, epicID);
+                Task task = new Task(name, desc, status);
+                task.setId(id);
+                task.setDuration(duration);
+                task.setStartTime(startTime);
+                return task;
             case EPIC:
-                return new Epic(name, desc);
+                Epic epic = new Epic(name, desc);
+                epic.setId(id);
+                epic.setStatus(status);
+                epic.setDuration(duration);
+                epic.setStartTime(startTime);
+                return epic;
+            case SUBTASK:
+                Subtask subtask = new Subtask(name, desc, status, epicID);
+                subtask.setId(id);
+                subtask.setDuration(duration);
+                subtask.setStartTime(startTime);
+                return subtask;
             default:
-                return null;
+                throw new ManagerSaveException("911");
         }
     }
 
     public static String historyToString(HistoryManager manager) {
         if (manager.getHistory().isEmpty()) {
-            return "";
+            return "нет истории";
         }
 
         StringBuilder result = new StringBuilder();

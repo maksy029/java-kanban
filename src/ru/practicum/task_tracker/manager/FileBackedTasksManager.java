@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final File file;
-    private static final String HEADER_CSV_FILE = "id,type,name,status,description,epic\n";
+    private static final String HEADER_CSV_FILE = "id,type,name,status,description,duration,startTime,epic\n";
 
     public FileBackedTasksManager(File file) {
         this.file = file;
@@ -25,7 +25,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 fw.write(CSVConverter.toString(task));
                 fw.write("\n");
             }
-
             for (Epic epic : getEpics()) {
                 fw.write(CSVConverter.toString(epic));
                 fw.write("\n");
@@ -47,18 +46,28 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager newTaskManager = new FileBackedTasksManager(file);
         try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             br.readLine(); // пропускаем первую строчку с заголовком
+
             while (br.ready()) {
                 String taskStr = br.readLine();
                 if (taskStr.isBlank()) {
                     break;
+                } else {
+                    Task task = CSVConverter.fromString(taskStr);
+                    if (task instanceof Epic) {
+                        newTaskManager.epics.put(task.getId(), (Epic) task);
+                    } else if (task instanceof Subtask) {
+                        newTaskManager.subtasks.put(task.getId(), (Subtask) task);
+                        newTaskManager.prioritizedTasks.add(task);
+                    } else {
+                        newTaskManager.tasks.put(task.getId(), task);
+                        newTaskManager.prioritizedTasks.add(task);
+                    }
+                    if (task.getId() > newTaskManager.getGeneratorId()) {
+                        newTaskManager.setGeneratorId(task.getId());
+                    }
                 }
-                Task task = CSVConverter.fromString(taskStr);
-                if (task == null) {
-                    break;
-                }
-                newTaskManager.addNewTask(task);
             }
-            br.readLine();
+
             while (br.ready()) {
                 String historyStr = br.readLine();
                 if (historyStr.isBlank()) {
@@ -136,6 +145,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
+    public void updateEpicDuration(Long epicId) {
+        super.updateEpicDuration(epicId);
+        save();
+    }
+
+    @Override
     public void deleteTask(Long taskId) {
         super.deleteTask(taskId);
         save();
@@ -200,8 +215,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public long generateId() {
-        Long id = super.generateId();
-        save();
-        return id;
+        return super.generateId();
     }
 }

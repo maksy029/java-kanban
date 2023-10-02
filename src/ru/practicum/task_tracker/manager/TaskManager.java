@@ -16,6 +16,10 @@ public interface TaskManager {
 
     long generateId();
 
+    long getGeneratorId();
+
+    void setGeneratorId(long generatorId);
+
     void updateTask(Task task);
 
     void updateSubtask(Subtask subtask);
@@ -51,4 +55,10 @@ public interface TaskManager {
     List<Subtask> getSubtasks();
 
     HistoryManager getInMemoryHistoryManager();
+
+    void updateEpicDuration(Long epicId);
+
+    List<Task> getPrioritizedTasks();
+
+    boolean isCheckTimeIntersection(Task task);
 }

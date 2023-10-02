@@ -3,15 +3,20 @@ package ru.practicum.task_tracker.tasks;
 import ru.practicum.task_tracker.models.Status;
 import ru.practicum.task_tracker.models.TaskType;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private Long epicId;
+    private final Long epicId;
     private final TaskType type = TaskType.SUBTASK;
-
 
     public Subtask(String name, String desc, Status status, Long epicId) {
         super(name, desc, status);
+        this.epicId = epicId;
+    }
+
+    public Subtask(String name, String desc, Status status, Long epicId, long duration, LocalDateTime startTime) {
+        super(name, desc, status, duration, startTime);
         this.epicId = epicId;
     }
 
@@ -39,10 +44,8 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,%d", id, type, name, status, desc, epicId);
+        return String.format("%d,%s,%s,%s,%s,%d,%s,%d", id, type, name, status, desc, duration, startTime, epicId);
     }
-
-
 }
 
 

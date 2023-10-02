@@ -1,4 +1,4 @@
-package ru.practicum.task_tracker.tester;
+package ru.practicum.task_tracker;
 
 import ru.practicum.task_tracker.manager.FileBackedTasksManager;
 import ru.practicum.task_tracker.models.Status;
@@ -7,18 +7,21 @@ import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
 import java.io.File;
+import java.time.LocalDateTime;
 
-public class FileBackedTasksManagerTest {
+public class FileBackedTasksManagerTester {
 
     public static void main(String[] args) {
         File file = new File("src/ru/practicum/task_tracker/resources/data.csv");
 
         FileBackedTasksManager tasksManager1 = new FileBackedTasksManager(file);
 
-        Task task1 = new Task("Таска1", "Описание Таски1", Status.NEW);
+        Task task1 = new Task("Таска1", "Описание Таски1", Status.NEW
+                , 60, LocalDateTime.of(2023, 9, 20, 12, 0));
         Long task1Id = tasksManager1.addNewTask(task1);
 
-        Task task2 = new Task("Таска2", "Описание Таски2", Status.NEW);
+        Task task2 = new Task("Таска2", "Описание Таски2", Status.DONE
+                , 60, LocalDateTime.of(2023, 10, 21, 12, 0));
         Long task2Id = tasksManager1.addNewTask(task2);
 
         Epic epic1 = new Epic("Эпик1", "Описание Эпика1");
@@ -27,13 +30,17 @@ public class FileBackedTasksManagerTest {
         Epic epic2 = new Epic("Эпик2", "Описание Эпика2");
         Long epic2Id = tasksManager1.addNewEpic(epic2);
 
-        Subtask subtask1 = new Subtask("Сабтаска1", "Описание Сабтаски1", Status.NEW, epic1Id);
+        Subtask subtask1 = new Subtask("Сабтаска1", "Описание Сабтаски1", Status.IN_PROGRESS, epic1Id
+                , 60, LocalDateTime.of(2023, 11, 22, 12, 0));
         Long subtask1Id = tasksManager1.addNewSubtask(subtask1);
 
-        Subtask subtask2 = new Subtask("Сабтаска2", "Описание Сабтаски2", Status.NEW, epic1Id);
+        Subtask subtask2 = new Subtask("Сабтаска2", "Описание Сабтаски2", Status.DONE, epic2Id
+                , 60, LocalDateTime.of(2023, 12, 23, 12, 0));
         Long subtask2Id = tasksManager1.addNewSubtask(subtask2);
 
-        FileBackedTasksManager tasksManager2 = FileBackedTasksManager.loadFromFile(file);
+        Subtask subtask3 = new Subtask("Сабтаска3", "Описание Сабтаски3", Status.DONE, epic2Id
+                , 60, LocalDateTime.of(2024, 1, 24, 12, 0));
+        Long subtask3Id = tasksManager1.addNewSubtask(subtask3);
 
         //Печать всех созданных task, epic, subtask c сохранением в СSV файл
         System.out.println();
@@ -61,6 +68,14 @@ public class FileBackedTasksManagerTest {
             System.out.println(history);
         }
 
+        System.out.println();
+        System.out.println("Печать task, subtask в порядке приоритета -startTime");
+        for (Task prioritizedTask : tasksManager1.getPrioritizedTasks()) {
+            System.out.println(prioritizedTask);
+        }
+
+        FileBackedTasksManager tasksManager2 = FileBackedTasksManager.loadFromFile(file);
+
         //Печать восстановленных из СSV файла задач:
         System.out.println();
         System.out.println("Печать восстановленных из СSV файла задач");
@@ -79,6 +94,12 @@ public class FileBackedTasksManagerTest {
         System.out.println("Печать восстановленной из CSV истории просмотров: ");
         for (Task history : tasksManager2.getInMemoryHistoryManager().getHistory()) {
             System.out.println(history);
+        }
+
+        System.out.println();
+        System.out.println("Печать восстановленных task, subtask в порядке приоритета -startTime");
+        for (Task prioritizedTask : tasksManager2.getPrioritizedTasks()) {
+            System.out.println(prioritizedTask);
         }
     }
 }

@@ -3,6 +3,8 @@ package ru.practicum.task_tracker.tasks;
 import ru.practicum.task_tracker.models.Status;
 import ru.practicum.task_tracker.models.TaskType;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Task {
@@ -11,11 +13,21 @@ public class Task {
     protected String desc;
     protected Status status;
     private final TaskType type = TaskType.TASK;
+    protected long duration;
+    protected LocalDateTime startTime;
 
     public Task(String name, String desc, Status status) {
         this.name = name;
         this.desc = desc;
         this.status = status;
+    }
+
+    public Task(String name, String desc, Status status, long duration, LocalDateTime startTime) {
+        this.name = name;
+        this.desc = desc;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public TaskType getType() {
@@ -69,7 +81,27 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,", id, this.type, name, status, desc);
+        return String.format("%d,%s,%s,%s,%s,%d,%s,", id, this.type, name, status, desc, duration, startTime);
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration, ChronoUnit.MINUTES);
     }
 }
 

@@ -1,29 +1,34 @@
 package ru.practicum.task_tracker.manager;
 
+import ru.practicum.task_tracker.exception.ManagerSaveException;
 import ru.practicum.task_tracker.models.Status;
 import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static ru.practicum.task_tracker.manager.Managers.getDefaultHistory;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final Map<Long, Task> tasks = new HashMap<>();
-    private final Map<Long, Epic> epics = new HashMap<>();
-    private final Map<Long, Subtask> subtasks = new HashMap<>();
+    protected final Map<Long, Task> tasks = new HashMap<>();
+    protected final Map<Long, Epic> epics = new HashMap<>();
+    protected final Map<Long, Subtask> subtasks = new HashMap<>();
     private long generatorId = 1;
     private final HistoryManager inMemoryHistoryManager = getDefaultHistory();
-
+    protected final TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime
+            , Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId));
 
     @Override
     public Long addNewTask(Task task) {
-        task.setId(generateId());
-        tasks.put(task.getId(), task);
+        if (isCheckTimeIntersection(task)) {
+            task.setId(generateId());
+            tasks.put(task.getId(), task);
+            prioritizedTasks.add(task);
+        } else {
+            throw new ManagerSaveException("Задача пересекается по времени");
+        }
         return task.getId();
     }
 
@@ -36,14 +41,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Long addNewSubtask(Subtask subtask) {
-        Epic epic = epics.get(subtask.getEpicId());
-        if (epic == null) {
-            return null;
+        if (isCheckTimeIntersection(subtask)) {
+            Epic epic = epics.get(subtask.getEpicId());
+            if (epic == null) {
+                return null;
+            }
+            subtask.setId(generateId());
+            subtasks.put(subtask.getId(), subtask);
+            prioritizedTasks.add(subtask);
+            epic.addSubtaskId(subtask.getId());
+            updateEpicStatus(subtask.getEpicId());
+            updateEpicDuration(subtask.getEpicId());
+        } else {
+            throw new ManagerSaveException("Задача пересекается по времени");
         }
-        subtask.setId(generateId());
-        subtasks.put(subtask.getId(), subtask);
-        epic.addSubtaskId(subtask.getId());
-        updateEpicStatus(subtask.getEpicId());
+
         return subtask.getId();
     }
 
@@ -53,14 +65,31 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public long getGeneratorId() {
+        return generatorId;
+    }
+
+    @Override
+    public void setGeneratorId(long generatorId) {
+        this.generatorId = generatorId;
+    }
+
+    @Override
     public void updateTask(Task task) {
         Task saveTask = tasks.get(task.getId());
         if (saveTask == null) {
             return;
         }
-        saveTask.setName(task.getName());
-        saveTask.setDesc(task.getDesc());
-        saveTask.setStatus(task.getStatus());
+        prioritizedTasks.remove(saveTask);
+        if (isCheckTimeIntersection(saveTask)) {
+            saveTask.setName(task.getName());
+            saveTask.setDesc(task.getDesc());
+            saveTask.setStatus(task.getStatus());
+            tasks.put(saveTask.getId(), saveTask);
+            prioritizedTasks.add(saveTask);
+        } else {
+            throw new ManagerSaveException("Задача пересекается по времени");
+        }
     }
 
     @Override
@@ -69,10 +98,18 @@ public class InMemoryTaskManager implements TaskManager {
         if (saveSubtask == null) {
             return;
         }
-        saveSubtask.setName(subtask.getName());
-        saveSubtask.setDesc(subtask.getDesc());
-        saveSubtask.setStatus(subtask.getStatus());
-        updateEpicStatus(saveSubtask.getEpicId());
+        prioritizedTasks.remove(saveSubtask);
+        if (isCheckTimeIntersection(saveSubtask)) {
+            saveSubtask.setName(subtask.getName());
+            saveSubtask.setDesc(subtask.getDesc());
+            saveSubtask.setStatus(subtask.getStatus());
+            subtasks.put(saveSubtask.getEpicId(), saveSubtask);
+            updateEpicStatus(saveSubtask.getEpicId());
+            updateEpicDuration(saveSubtask.getEpicId());
+            prioritizedTasks.add(saveSubtask);
+        } else {
+            throw new ManagerSaveException("Задача пересекается по времени");
+        }
     }
 
     @Override
@@ -84,6 +121,7 @@ public class InMemoryTaskManager implements TaskManager {
         saveEpic.setName(epic.getName());
         saveEpic.setDesc(epic.getDesc());
         saveEpic.setStatus(epic.getStatus());
+        epics.put(saveEpic.getId(), saveEpic);
     }
 
     @Override
@@ -94,7 +132,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStatus(Status.NEW);
             return;
         }
-        for (long subtaskId : subtaskIds) {
+        for (Long subtaskId : subtaskIds) {
             Subtask subtask = subtasks.get(subtaskId);
             if (subtask == null) {
                 return;
@@ -115,6 +153,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask(Long taskId) { // удаление таски по id
+        prioritizedTasks.remove(getTaskById(taskId));
         tasks.remove(taskId);
         inMemoryHistoryManager.remove(taskId);
     }
@@ -129,10 +168,12 @@ public class InMemoryTaskManager implements TaskManager {
         if (savedEpic == null) {
             return;
         }
+        prioritizedTasks.remove(getSubtaskById(subtaskId));
         subtasks.remove(subtaskId);
         inMemoryHistoryManager.remove(subtaskId);
         savedEpic.getSubtaskIds().remove(savedSubtask.getId());
         updateEpicStatus(savedEpic.getId());
+        updateEpicDuration(savedEpic.getId());
     }
 
     @Override
@@ -151,6 +192,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllTask() { // удаление всех тасок в мапе и истории просмотра
         for (Long id : tasks.keySet()) {
             inMemoryHistoryManager.remove(id);
+            prioritizedTasks.remove(getTaskById(id));
         }
         tasks.clear();
     }
@@ -159,6 +201,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllSubtask() { // удаление всех сабтасок и истории просмотра
         for (Long id : subtasks.keySet()) {
             inMemoryHistoryManager.remove(id);
+            prioritizedTasks.remove(getSubtaskById(id));
         }
         subtasks.clear();
     }
@@ -215,5 +258,49 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public HistoryManager getInMemoryHistoryManager() {
         return this.inMemoryHistoryManager;
+    }
+
+    @Override
+    public void updateEpicDuration(Long epicId) {
+        Epic epic = epics.get(epicId);
+        List<Long> subtaskIds = epic.getSubtaskIds();
+        List<LocalDateTime> listSubtaskStartTime = new ArrayList<>();
+        List<LocalDateTime> listSubtaskEndTime = new ArrayList<>();
+        long sum = 0;
+        for (Long subtaskId : subtaskIds) {
+            Subtask subtask = subtasks.get(subtaskId);
+            if (subtask == null) {
+                return;
+            }
+            listSubtaskStartTime.add(subtask.getStartTime());
+            sum += subtask.getDuration();
+            listSubtaskEndTime.add(subtask.getEndTime());
+        }
+
+        epic.setStartTime(Collections.min(listSubtaskStartTime));
+        epic.setDuration(sum);
+        epic.setEndTime(Collections.max(listSubtaskEndTime));
+    }
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
+    }
+
+    @Override
+    public boolean isCheckTimeIntersection(Task newTask) {
+        if (getPrioritizedTasks().isEmpty()) {
+            return true;
+        }
+        for (Task prioritizedTask : getPrioritizedTasks()) {
+            if (prioritizedTask.getStartTime() == null) {
+                return true;
+            }
+            if (!(newTask.getEndTime().isBefore(prioritizedTask.getStartTime())
+                    || newTask.getStartTime().isAfter(prioritizedTask.getEndTime()))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

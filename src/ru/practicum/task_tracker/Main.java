@@ -9,11 +9,19 @@ import ru.practicum.task_tracker.tasks.Task;
 import static ru.practicum.task_tracker.manager.Managers.getDefault;
 
 /*
-коммит 2 по ТЗ6:
-исправили в классе FileBackedTasksManager:
-- переменная File file теперь private;
-- в методе loadFromFile изменили тип переменной newTaskManager c TaskManager  на FileBackedTasksManager,
-тем самым ушли от каста возвращаемого обекта;
+коммит 1 по ТЗ7:
+Добавили новые поля в:
+-Таск, Сабтаск:
+* startTime, duration;
+- Эпик:
+* endTime;
+
+Добавили новый функционал InMemoryTaskManager:
+- приоритезация задач,подзадач по startTime;
+- валидация задач, подзадач на предмет пересечения по времени;
+- updateEpicDuration, который устанавливает расчетные поля Эпика: startTime, duration, endTime;
+
+Покрыли JUnit-тестами не менее 80% от функциональной части Managers, тесты размещены в пакете tester.
  */
 
 public class Main {
@@ -29,20 +37,19 @@ public class Main {
         Long task2Id = inMemoryTaskManager.addNewTask(task2);
 
         Epic epic1 = new Epic("Эпик1", "Описание Эпика1");
-        long epic1Id = inMemoryTaskManager.addNewEpic(epic1);
-
-        Subtask subtask1 = new Subtask("Сабтаска1", "Описание Сабтаски1", Status.NEW, epic1Id);
-        Long subtask1Id = inMemoryTaskManager.addNewSubtask(subtask1);
-
-        Subtask subtask2 = new Subtask("Сабтаска2", "Описание Сабтаски2", Status.NEW, epic1Id);
-        Long subtask2Id = inMemoryTaskManager.addNewSubtask(subtask2);
-
-        Subtask subtask3 = new Subtask("Сабтаска3", "Описание Сабтаски3", Status.NEW, epic1Id);
-        Long subtask3Id = inMemoryTaskManager.addNewSubtask(subtask3);
+        Long epic1Id = inMemoryTaskManager.addNewEpic(epic1);
 
         Epic epic2 = new Epic("Эпик2", "Описание Эпика2");
         Long epic2Id = inMemoryTaskManager.addNewEpic(epic2);
 
+        Subtask subtask1 = new Subtask("Сабтаска1", "Описание Сабтаски1", Status.NEW, epic1Id);
+        Long subtask1Id = inMemoryTaskManager.addNewSubtask(subtask1);
+
+        Subtask subtask2 = new Subtask("Сабтаска2", "Описание Сабтаски2", Status.NEW, epic2Id);
+        Long subtask2Id = inMemoryTaskManager.addNewSubtask(subtask2);
+
+        Subtask subtask3 = new Subtask("Сабтаска3", "Описание Сабтаски3", Status.NEW, epic2Id);
+        Long subtask3Id = inMemoryTaskManager.addNewSubtask(subtask3);
 
         //Проверка. Печать всех созданных task, epic, subtask
         System.out.println();
@@ -74,16 +81,6 @@ public class Main {
                 + inMemoryTaskManager.getTaskById(task1Id).getName());
         System.out.println("У сабтаски с ID: " + subtask1Id + " Название: "
                 + inMemoryTaskManager.getSubtaskById(subtask1Id).getName());
-
-//        // Проверка. Обновление Таск
-//        System.out.println();
-//        System.out.println("Проверка. Обновление Таск");
-//        Task newTask = new Task("Тестовая", "Тестовая", Status.NEW);
-//        inMemoryTaskManager.addNewTask(newTask);
-//        inMemoryTaskManager.updateTask(newTask);
-//        for (Task task : inMemoryTaskManager.getTasks()) {
-//            System.out.println(task);
-//        }
 
         //Печать истории просмотров:
         System.out.println();

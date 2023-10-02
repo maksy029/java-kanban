@@ -3,18 +3,19 @@ package ru.practicum.task_tracker.tasks;
 import ru.practicum.task_tracker.models.Status;
 import ru.practicum.task_tracker.models.TaskType;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
     private final ArrayList<Long> subtaskIds;  // в этом списке лежат id сабстасков для эпика
     private final TaskType type = TaskType.EPIC;
+    private LocalDateTime endTime;
 
     public Epic(String name, String desc) {
         super(name, desc, Status.NEW);
         subtaskIds = new ArrayList<>();
     }
-
 
     public TaskType getType() {
         return type;
@@ -48,7 +49,15 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,", id, type, name, status, desc);
+        return String.format("%d,%s,%s,%s,%s,%d,%s,", id, type, name, status, desc, duration, startTime);
     }
 
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
 }
