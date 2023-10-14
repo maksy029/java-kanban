@@ -15,12 +15,16 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final File file;
+    private File file;
     private static final String HEADER_CSV_FILE = "id,type,name,status,description,duration,startTime,epic\n";
+
+    public FileBackedTasksManager() {
+    }
 
     public FileBackedTasksManager(File file) {
         this.file = file;
     }
+
 
     void save() {
         try (Writer fw = new FileWriter(file, StandardCharsets.UTF_8)) {
@@ -48,7 +52,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static FileBackedTasksManager loadFromFile(File file) {
-        FileBackedTasksManager newTaskManager = new FileBackedTasksManager(file);
+        FileBackedTasksManager newTaskManager = Managers.getDefaultFileBacked();
         try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             br.readLine(); // пропускаем первую строчку с заголовком
 
@@ -217,6 +221,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
         return subtask;
     }
+
 
     @Override
     public long generateId() {

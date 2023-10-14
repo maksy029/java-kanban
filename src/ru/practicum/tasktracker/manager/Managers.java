@@ -1,5 +1,9 @@
 package ru.practicum.tasktracker.manager;
 
+import com.google.gson.Gson;
+
+import java.io.File;
+
 public final class Managers {
 
     private Managers() {
@@ -10,9 +14,16 @@ public final class Managers {
         };
     }
 
-    public static TaskManager getDefault() {
-        return new InMemoryTaskManager() {
+    public static HttpTaskManager getDefault() {
+        return new HttpTaskManager() {
         };
     }
 
+    public static Gson getGson() {
+        return new Gson();
+    }
+
+    public static FileBackedTasksManager getDefaultFileBacked() {
+        return new FileBackedTasksManager(new File("src/ru/practicum/tasktracker/resources/data.csv"));
+    }
 }

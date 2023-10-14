@@ -1,8 +1,7 @@
-package tasktracker.manager;
+package ru.practicum.tasktracker.manager;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.practicum.tasktracker.manager.InMemoryTaskManager;
 import ru.practicum.tasktracker.models.Status;
 import ru.practicum.tasktracker.tasks.Epic;
 import ru.practicum.tasktracker.tasks.Subtask;

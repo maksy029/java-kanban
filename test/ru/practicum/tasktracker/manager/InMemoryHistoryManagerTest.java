@@ -1,11 +1,8 @@
-package ru.practicum.tasktracker.tester;
+package ru.practicum.tasktracker.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.practicum.tasktracker.manager.HistoryManager;
-import ru.practicum.tasktracker.manager.Managers;
-import ru.practicum.tasktracker.manager.TaskManager;
 import ru.practicum.tasktracker.models.Status;
 import ru.practicum.tasktracker.tasks.Task;
 
@@ -20,8 +17,8 @@ public class InMemoryHistoryManagerTest {
 
     @BeforeEach
     void setTaskmanager() {
-        historyManager = Managers.getDefaultHistory();
-        taskManager = Managers.getDefault();
+        historyManager = new InMemoryHistoryManager();
+        taskManager = new InMemoryTaskManager();
     }
 
     @DisplayName("Тест добавления в историю.")

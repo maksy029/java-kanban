@@ -12,7 +12,7 @@ public class Task {
     protected String name;
     protected String desc;
     protected Status status;
-    private final TaskType type = TaskType.TASK;
+    protected TaskType type;
     protected long duration;
     protected LocalDateTime startTime;
 
@@ -20,6 +20,7 @@ public class Task {
         this.name = name;
         this.desc = desc;
         this.status = status;
+        this.type = TaskType.TASK;
     }
 
     public Task(String name, String desc, Status status, long duration, LocalDateTime startTime) {
@@ -28,6 +29,7 @@ public class Task {
         this.status = status;
         this.duration = duration;
         this.startTime = startTime;
+        this.type = TaskType.TASK;
     }
 
     public TaskType getType() {

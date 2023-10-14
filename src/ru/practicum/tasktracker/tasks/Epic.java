@@ -3,18 +3,19 @@ package ru.practicum.tasktracker.tasks;
 import ru.practicum.tasktracker.models.Status;
 import ru.practicum.tasktracker.models.TaskType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
     private final ArrayList<Long> subtaskIds;  // в этом списке лежат id сабстасков для эпика
-    private final TaskType type = TaskType.EPIC;
     private LocalDateTime endTime;
 
     public Epic(String name, String desc) {
         super(name, desc, Status.NEW);
         subtaskIds = new ArrayList<>();
+        type = TaskType.EPIC;
     }
 
     public TaskType getType() {

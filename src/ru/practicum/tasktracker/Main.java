@@ -1,26 +1,34 @@
 package ru.practicum.tasktracker;
 
-import ru.practicum.tasktracker.manager.TaskManager;
+import ru.practicum.tasktracker.manager.HttpTaskManager;
+import ru.practicum.tasktracker.manager.Managers;
 import ru.practicum.tasktracker.models.Status;
+import ru.practicum.tasktracker.server.HttpTaskServer;
+import ru.practicum.tasktracker.server.KVServer;
 import ru.practicum.tasktracker.tasks.Epic;
 import ru.practicum.tasktracker.tasks.Subtask;
 import ru.practicum.tasktracker.tasks.Task;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
-import static ru.practicum.tasktracker.manager.Managers.getDefault;
-
 /*
-коммит 2 по ТЗ7:
-- исправили наименования пакетов(исключили "_", переименовали папку с тестами);
-- исключили из названий списков содержание "лист";
-- скорректировали текст сообщения, которыйвводится при выбрасывание ошибки;
+коммит 1 по ТЗ8:
+- Добавили новую реализацию приложения: сохранение объектов не только в файл CSV, а и в KV Server.
+Для данной реализации написали HttpTaskServer(мапинг эндпоинтов и методов HttpTaskManager)
+, добавили HttpTaskManager(новая реализация TaskManager с сохранением в KvServer)
+- Дополнили test проверкой нового функционала
  */
 
 public class Main {
 
-    public static void main(String[] args) {
-        TaskManager inMemoryTaskManager = getDefault();
+    public static void main(String[] args) throws IOException {
+        KVServer kvServer = new KVServer();
+        kvServer.start();
+
+        HttpTaskManager inMemoryTaskManager = Managers.getDefault();
+        HttpTaskServer httpTaskServer = new HttpTaskServer(inMemoryTaskManager);
+        httpTaskServer.start();
 
         //Создание задач и присвоение ID
         Task task1 = new Task("Таска1", "Описание Таски1", Status.NEW

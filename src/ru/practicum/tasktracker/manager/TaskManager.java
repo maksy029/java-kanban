@@ -54,6 +54,8 @@ public interface TaskManager {
 
     List<Subtask> getSubtasks();
 
+    List<Subtask> getEpicSubtasks (Long epicId);
+
     HistoryManager getInMemoryHistoryManager();
 
     void updateEpicDuration(Long epicId);

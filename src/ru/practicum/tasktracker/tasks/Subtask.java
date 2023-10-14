@@ -8,16 +8,18 @@ import java.util.Objects;
 
 public class Subtask extends Task {
     private final Long epicId;
-    private final TaskType type = TaskType.SUBTASK;
+
 
     public Subtask(String name, String desc, Status status, Long epicId) {
         super(name, desc, status);
         this.epicId = epicId;
+        type = TaskType.SUBTASK;
     }
 
     public Subtask(String name, String desc, Status status, Long epicId, long duration, LocalDateTime startTime) {
         super(name, desc, status, duration, startTime);
         this.epicId = epicId;
+        type = TaskType.SUBTASK;
     }
 
     public Long getEpicId() {
