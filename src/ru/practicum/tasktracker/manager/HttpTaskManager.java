@@ -27,32 +27,32 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     private void load() {
-        String tasksTaskString = kvTaskClient.load(TASK);
-        if (tasksTaskString != null) {
-            List<Task> tasksTask = gson.fromJson(tasksTaskString, new TypeToken<ArrayList<Task>>() {
+        String tasksJson = kvTaskClient.load(TASK);
+        if (tasksJson != null) {
+            List<Task> restoreTasks = gson.fromJson(tasksJson, new TypeToken<ArrayList<Task>>() {
             });
-            tasksTask.forEach(task -> tasks.put(task.getId(), task));
+            restoreTasks.forEach(task -> tasks.put(task.getId(), task));
         }
 
-        String tasksSubtaskString = kvTaskClient.load(SUBTASK);
-        if (tasksSubtaskString != null) {
-            List<Subtask> tasksSubtask = gson.fromJson(tasksSubtaskString, new TypeToken<ArrayList<Subtask>>() {
+        String subtasksJson = kvTaskClient.load(SUBTASK);
+        if (subtasksJson != null) {
+            List<Subtask> restoreSubtasks = gson.fromJson(subtasksJson, new TypeToken<ArrayList<Subtask>>() {
             });
-            tasksSubtask.forEach(subtask -> subtasks.put(subtask.getId(), subtask));
+            restoreSubtasks.forEach(subtask -> subtasks.put(subtask.getId(), subtask));
         }
 
-        String tasksEpicString = kvTaskClient.load(EPIC);
-        if (tasksEpicString != null) {
-            List<Epic> tasksEpic = gson.fromJson(tasksEpicString, new TypeToken<ArrayList<Epic>>() {
+        String epicsJson = kvTaskClient.load(EPIC);
+        if (epicsJson != null) {
+            List<Epic> restoreEpics = gson.fromJson(epicsJson, new TypeToken<ArrayList<Epic>>() {
             });
-            tasksEpic.forEach(epic -> epics.put(epic.getId(), epic));
+            restoreEpics.forEach(epic -> epics.put(epic.getId(), epic));
         }
 
-        String tasksHistoryString = kvTaskClient.load(HISTORY);
-        if (tasksHistoryString != null) {
-            List<Task> tasksHistory = gson.fromJson(tasksHistoryString, new TypeToken<ArrayList<Task>>() {
+        String historyJoin = kvTaskClient.load(HISTORY);
+        if (historyJoin != null) {
+            List<Task> restoreHistory = gson.fromJson(historyJoin, new TypeToken<ArrayList<Task>>() {
             });
-            tasksHistory.forEach(task -> getInMemoryHistoryManager().add(task));
+            restoreHistory.forEach(task -> getInMemoryHistoryManager().add(task));
         }
     }
 

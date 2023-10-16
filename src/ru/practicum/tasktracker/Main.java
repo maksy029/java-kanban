@@ -13,11 +13,10 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 /*
-коммит 1 по ТЗ8:
-- Добавили новую реализацию приложения: сохранение объектов не только в файл CSV, а и в KV Server.
-Для данной реализации написали HttpTaskServer(мапинг эндпоинтов и методов HttpTaskManager)
-, добавили HttpTaskManager(новая реализация TaskManager с сохранением в KvServer)
-- Дополнили test проверкой нового функционала
+коммит 2 по ТЗ8:
+- исключили  wild import;
+- произвели рефакторинг методов: handler(HttpExchange exchange) и getEndpoint(HttpExchange exchange)
+класса HttpTaskServer с той целью, что бы разбить их на менее объемные методы;
  */
 
 public class Main {
