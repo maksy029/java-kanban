@@ -13,10 +13,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 /*
-коммит 2 по ТЗ8:
-- исключили  wild import;
-- произвели рефакторинг методов: handler(HttpExchange exchange) и getEndpoint(HttpExchange exchange)
-класса HttpTaskServer с той целью, что бы разбить их на менее объемные методы;
+коммит 3 по ТЗ8:
+- добавили выбрасывание кастомных Exceptions;
+- добавили в параметры конструктора KVTaskClienta - String url;
  */
 
 public class Main {

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HttpTaskManager extends FileBackedTasksManager {
+    private static final String URL = "http://localhost:8078/";
     private static final String TASK = "task";
     private static final String EPIC = "epic";
     private static final String SUBTASK = "subtask";
@@ -21,7 +22,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     public HttpTaskManager() {
         super();
-        kvTaskClient = new KVTaskClient();
+        kvTaskClient = new KVTaskClient(URL);
         gson = Managers.getGson();
         load();
     }
